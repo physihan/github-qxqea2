@@ -143,7 +143,7 @@ export default function () {
         // )
         
         await fetchGPT(
-          getMessageByTalkMode({messageList:store.validContext,talkMode:"1"})
+          getMessageByTalkMode({messageList:store.validContext,talkMode:store.sessionSettings.talkMode})
         )
       } catch (error: any) {
         setStore("loading", false)

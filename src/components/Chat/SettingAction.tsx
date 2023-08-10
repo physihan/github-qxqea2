@@ -228,6 +228,10 @@ export default function SettingAction() {
                   {
                     value: "100",
                     label: "独立对话模式"
+                  },
+                  {
+                    value: "1000",
+                    label: "锁定模式"
                   }
                 ]}
               />
