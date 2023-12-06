@@ -6,7 +6,7 @@
   content: attr(tooltip);
   position: absolute;
   display: block;
-  background: inherit;
+  background: white;
   text-align: center;
   color: inherit;
   border-radius: 0.25rem;
