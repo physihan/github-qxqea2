@@ -1,8 +1,10 @@
 import logo from "/assets/logo.svg?raw"
 import ThemeToggle from "./ThemeToggle"
 import { RootStore, loadSession } from "~/store"
-import { Show, createMemo } from "solid-js"
+import { Show, createMemo, createSignal } from "solid-js"
 import { useNavigate } from "solid-start"
+import Modal from "./Modal"
+import IndexedDBComponent from "./IndexModal"
 
 function splitEmoji(text: string) {
   const [icon, title] = text
@@ -31,6 +33,11 @@ export default function Header() {
   const { store } = RootStore
   const navigate = useNavigate()
   const iconTitle = createMemo(() => splitEmoji(store.sessionSettings.title))
+  const [isOpen, setIsOpen] = createSignal(true)
+  const save = () => {
+    store.messageList
+  }
+  const load = () => {}
   return (
     <>
       <div
@@ -74,15 +81,6 @@ export default function Header() {
                     src="https://img.shields.io/github/stars/ourongxing/chatgpt-vercel?logo=github"
                   />
                 </a>
-                <a
-                  class="ml-2"
-                  href="https://github.com/ourongxing/chatgpt-vercel/fork"
-                >
-                  <img
-                    alt="GitHub forks badge"
-                    src="https://img.shields.io/github/forks/ourongxing/chatgpt-vercel?logo=github"
-                  />
-                </a>
               </>
             }
           >
@@ -91,6 +89,10 @@ export default function Header() {
             </span>
           </Show>
         </div>
+        <p>加载预设</p>
+        <p>保存预设</p>
+        {/* <Modal isOpen={isOpen()}></Modal> */}
+        {/* <IndexedDBComponent /> */}
         <ThemeToggle />
       </header>
     </>
