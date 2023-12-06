@@ -27,7 +27,8 @@ export default function MessageItem(props: Props) {
     user: "bg-gradient-to-r from-red-300 to-blue-700 ",
     assistant: "bg-gradient-to-r from-yellow-300 to-red-700 "
   }
-
+  const [mode, setMode] = createSignal("normal")
+  const [editValue, setEditValue] = createSignal("")
   function copy() {
     copyToClipboard(props.message.content)
   }
@@ -35,7 +36,23 @@ export default function MessageItem(props: Props) {
   function edit() {
     setStore("inputContent", props.message.content)
   }
-
+  function editRaw() {
+    setMode("edit")
+    setEditValue(props.message.content)
+    // setStore("inputContent", props.message.content)
+    // setStore("messageList", messages => {
+    //   if (messages[props.index!].role === "user") {
+    //     return messages.filter(
+    //       (_, i) =>
+    //         !(
+    //           i === props.index ||
+    //           (i === props.index! + 1 && _.role !== "user")
+    //         )
+    //     )
+    //   }
+    //   return messages.filter((_, i) => i !== props.index)
+    // })
+  }
   function del() {
     setStore("messageList", messages => {
       if (messages[props.index!].role === "user") {
@@ -131,21 +148,52 @@ export default function MessageItem(props: Props) {
             <div class="i-carbon:locked text-white" />
           </Show>
         </div>
-        <div
-          class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
-          innerHTML={renderedMarkdown()
-            .replace(
-              /\s*Vercel\s*/g,
-              `<a href="http://vercel.com/?utm_source=busiyi&utm_campaign=oss" style="border-bottom:0;margin-left: 6px">${vercel}</a>`
-            )
-            .replace(
-              /\s*OpenAI\s*/g,
-              `<a href="https://www.openai.com" style="border-bottom:0;margin-left: 6px">${openai}</a>`
-            )}
-        />
+        {mode() === "edit" ? (
+          <>
+            <textarea
+              class="w-full"
+              rows={5}
+              value={editValue()}
+              onInput={e => {
+                setEditValue(e.target.value)
+                console.log(editValue())
+              }}
+            />
+            <button
+              onClick={() => {
+                setStore("messageList", messages => {
+                  const newMessages = [...messages]
+                  newMessages[props.index!] = {
+                    ...newMessages[props.index!],
+                    content: editValue()
+                  }
+                  return newMessages
+                })
+                setMode("normal")
+              }}
+            >
+              保存
+            </button>
+          </>
+        ) : (
+          <div
+            class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
+            innerHTML={renderedMarkdown()
+              .replace(
+                /\s*Vercel\s*/g,
+                `<a href="http://vercel.com/?utm_source=busiyi&utm_campaign=oss" style="border-bottom:0;margin-left: 6px">${vercel}</a>`
+              )
+              .replace(
+                /\s*OpenAI\s*/g,
+                `<a href="https://www.openai.com" style="border-bottom:0;margin-left: 6px">${openai}</a>`
+              )}
+          />
+        )}
+
         <Show when={!props.hiddenAction}>
           <MessageAction
             del={del}
+            editRaw={editRaw}
             copy={copy}
             edit={edit}
             reAnswer={reAnswer}

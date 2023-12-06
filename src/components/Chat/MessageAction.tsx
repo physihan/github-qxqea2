@@ -6,6 +6,7 @@ export default function MessageAction({
   edit,
   del,
   copy,
+  editRaw,
   reAnswer
 }: {
   role: Role
@@ -13,6 +14,7 @@ export default function MessageAction({
   del: () => void
   copy: () => void
   reAnswer: () => void
+  editRaw: () => void
 }) {
   const [copied, setCopied] = createSignal(false)
   return (
@@ -33,6 +35,7 @@ export default function MessageAction({
       </Show>
       <ActionItem label="重新回答" onClick={reAnswer} icon={"i-carbon:reset"} />
       <ActionItem label="删除" onClick={del} icon={"i-carbon:trash-can"} />
+      <ActionItem label="编辑原文" onClick={editRaw} icon={"i-carbon:edit"} />
     </div>
   )
 }
