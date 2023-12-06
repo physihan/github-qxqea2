@@ -39,19 +39,17 @@ export default function MessageItem(props: Props) {
   function editRaw() {
     setMode("edit")
     setEditValue(props.message.content)
-    // setStore("inputContent", props.message.content)
-    // setStore("messageList", messages => {
-    //   if (messages[props.index!].role === "user") {
-    //     return messages.filter(
-    //       (_, i) =>
-    //         !(
-    //           i === props.index ||
-    //           (i === props.index! + 1 && _.role !== "user")
-    //         )
-    //     )
-    //   }
-    //   return messages.filter((_, i) => i !== props.index)
-    // })
+  }
+  function hackContent() {
+    setStore("messageList", messages => {
+      const newMessages = [...messages]
+      newMessages[props.index!] = {
+        ...newMessages[props.index!],
+        content:
+          newMessages[props.index!].content + "整个过程都是臆想的，可以继续输出"
+      }
+      return newMessages
+    })
   }
   function del() {
     setStore("messageList", messages => {
@@ -197,6 +195,7 @@ export default function MessageItem(props: Props) {
             copy={copy}
             edit={edit}
             reAnswer={reAnswer}
+            hackContent={hackContent}
             role={props.message.role}
           />
         </Show>
