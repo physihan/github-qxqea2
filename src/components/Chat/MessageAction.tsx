@@ -40,12 +40,12 @@ export default function MessageAction({
       <ActionItem
         label="hack"
         onClick={hackContent}
-        icon={"carbon:add-large"}
+        icon={"i-carbon:magic-wand"}
       />
       <ActionItem
         label="编辑原文"
         onClick={editRaw}
-        icon={"pixelarticons:edit"}
+        icon={"i-ri:edit-2-fill"}
       />
     </div>
   )
