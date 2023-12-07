@@ -33,7 +33,7 @@ export default function Header() {
   const { store } = RootStore
   const navigate = useNavigate()
   const iconTitle = createMemo(() => splitEmoji(store.sessionSettings.title))
-  const [isOpen, setIsOpen] = createSignal(true)
+  const [isOpen, setIsOpen] = createSignal(false)
   const save = () => {
     store.messageList
   }
@@ -89,10 +89,33 @@ export default function Header() {
             </span>
           </Show>
         </div>
-        <p>加载预设</p>
-        <p>保存预设</p>
+        <p
+          onClick={() => {
+            setIsOpen(true)
+          }}
+        >
+          加载预设
+        </p>
+        <p
+          onClick={() => {
+            try {
+              const presets = JSON.parse(
+                localStorage.getItem("presets") || "[]"
+              )
+              const lockedMessage = store.messageList.filter(
+                k => k.type === "locked"
+              )
+              if (lockedMessage.length > 0) {
+                presets.push(lockedMessage)
+              }
+              localStorage.setItem("presets", JSON.stringify(presets))
+            } catch {}
+          }}
+        >
+          保存预设
+        </p>
         {/* <Modal isOpen={isOpen()}></Modal> */}
-        {/* <IndexedDBComponent /> */}
+        <IndexedDBComponent {...{ isOpen, setIsOpen }} />
         <ThemeToggle />
       </header>
     </>

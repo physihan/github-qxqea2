@@ -1,48 +1,32 @@
-import { createEffect, createSignal } from "solid-js"
+import { createEffect, createSignal, onMount } from "solid-js"
 import Modal from "./Modal"
+import { RootStore } from "~/store"
 
-const IndexedDBComponent = () => {
-  const [isModalOpen, setIsModalOpen] = createSignal(true)
+const IndexedDBComponent = props => {
+  // const [isModalOpen, setIsModalOpen] = createSignal(true)
+  const { store, setStore } = RootStore
+  const { isOpen, setIsOpen } = props
   const [data, setData] = createSignal([])
   const [selectedValue, setSelectedValue] = createSignal(null)
 
-  const fetchIndexedDBData = () => {
-    const dbName = "YourDatabaseName"
-    const storeName = "YourStoreName"
-
-    const openRequest = window.indexedDB.open(dbName, 1)
-
-    openRequest.onerror = event => {
-      console.error("IndexedDB error:", event.target.errorCode)
-    }
-
-    openRequest.onsuccess = event => {
-      const db = event.target.result
-      const transaction = db.transaction(storeName, "readonly")
-      const objectStore = transaction.objectStore(storeName)
-      const getRequest = objectStore.getAll()
-
-      getRequest.onsuccess = event => {
-        const result = event.target.result
-        setData(result)
-        setIsModalOpen(true) // Open the modal after data fetch
-      }
-
-      transaction.oncomplete = () => {
-        db.close()
-      }
+  const fetchLocalData = () => {
+    try {
+      const presets = JSON.parse(localStorage.getItem("presets") || "[]")
+      setData(presets)
+    } catch {
+      setData([])
     }
   }
 
+  onMount(() => {
+    fetchLocalData()
+  })
   createEffect(() => {
-    if (isModalOpen()) {
-      fetchIndexedDBData()
+    if (isOpen()) {
+      fetchLocalData()
     }
   })
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-  }
+  const handleCloseModal = () => {}
 
   const handleSelectChange = event => {
     setSelectedValue(event.target.value)
@@ -51,9 +35,12 @@ const IndexedDBComponent = () => {
   return (
     <>
       <Modal
-        isOpen={isModalOpen()}
-        setIsOpen={setIsModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onOk={() => {
+          setStore("messageList", data()[selectedValue() ?? 0])
+          setIsOpen(false)
+        }}
       >
         <select
           class="block appearance-none border border-gray-300 rounded px-4 py-2 w-full mb-4 focus:outline-none"
@@ -64,8 +51,8 @@ const IndexedDBComponent = () => {
             Select an item
           </option>
           {data().map((item, index) => (
-            <option value={item.id} key={index}>
-              {item.name}
+            <option value={index} key={index}>
+              {index}
             </option>
           ))}
         </select>

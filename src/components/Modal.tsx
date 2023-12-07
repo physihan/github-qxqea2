@@ -6,7 +6,7 @@ const Modal = props => {
   return (
     <div
       class={`${
-        isOpen ? "block" : "hidden"
+        isOpen() ? "block" : "hidden"
       } fixed z-10 inset-0 overflow-y-auto`}
     >
       <div class="flex items-center justify-center min-h-screen">

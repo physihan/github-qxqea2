@@ -20,7 +20,7 @@ export default function MessageAction({
 }) {
   const [copied, setCopied] = createSignal(false)
   return (
-    <div class="flex absolute items-center justify-between <sm:bottom--4 <sm:right-0  right-2 text-sm text-slate-7 dark:text-slate group-hover:opacity-100 group-focus:opacity-100 opacity-0 dark:bg-#292B32 bg-#E7EBF0 rounded">
+    <div class="flex absolute items-center justify-between <sm:bottom--8 <sm:right-0  right-2 text-sm text-slate-7 dark:text-slate group-hover:opacity-100 group-focus:opacity-100 opacity-0 dark:bg-#292B32 bg-#E7EBF0 rounded">
       <Show when={role === "assistant"}>
         <ActionItem
           label="复制"
@@ -54,7 +54,7 @@ export default function MessageAction({
 function ActionItem(props: { onClick: any; icon: string; label?: string }) {
   return (
     <div
-      class="flex items-center cursor-pointer p-2 hover:bg-slate/10 rounded text-1.2em"
+      class="flex items-center cursor-pointer p-2 hover:bg-slate/10 rounded text-2em"
       // 不能解构
       onClick={props.onClick}
       attr:tooltip={props.label}
