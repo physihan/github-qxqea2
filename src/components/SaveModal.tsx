@@ -14,7 +14,6 @@ const SaveModal = (props: SaveModalProps) => {
 
   return (
     <Modal
-      desdroyOnClose={true}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       onCancel={() => {}}

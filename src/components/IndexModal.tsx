@@ -41,7 +41,7 @@ const IndexedDBComponent = props => {
   }
 
   const handleSave = index => {
-    const updatedData: any = [...data()]
+    const updatedData = [...data()]
     if (Array.isArray(updatedData[index])) {
       updatedData[index] = { name: input(), content: updatedData[index] }
     } else {
@@ -52,18 +52,26 @@ const IndexedDBComponent = props => {
     setEditingIndex(-1) // Reset editing index after saving
   }
 
+  const handleRadioChange = index => {
+    setSelectedValue(index)
+  }
+
   return (
     <>
       <Modal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onOk={() => {
-          setStore("messageList", data()[selectedValue() ?? 0])
-          setIsOpen(false)
+          const target: any = data()[selectedValue() ?? 0]
+          if (Array.isArray(target)) {
+            setStore("messageList", target)
+          } else {
+            setStore("messageList", target.content)
+          }
         }}
       >
         <ul class="list-disc pl-4">
-          {data().map((item: any, index) => {
+          {data().map((item, index) => {
             let name
             if (Array.isArray(item)) {
               name = index
@@ -72,17 +80,27 @@ const IndexedDBComponent = props => {
             }
             return (
               <li key={index} class="flex items-center justify-between mb-2">
-                {editingIndex() === index ? (
+                <label class="flex items-center w-10  flex grow">
                   <input
-                    type="text"
-                    class="border border-gray-300 rounded px-2 py-1 focus:outline-none"
-                    value={name}
-                    onInput={e => setInput(e.target.value)}
+                    type="radio"
+                    class="mr-2"
+                    name="selectedItem"
+                    value={index}
+                    checked={selectedValue() === index}
+                    onChange={() => handleRadioChange(index)}
                   />
-                ) : (
-                  <span>{name}</span>
-                )}
-                <div>
+                  {editingIndex() === index ? (
+                    <input
+                      type="text"
+                      class="border border-gray-300 rounded px-2 w-full py-1 focus:outline-none"
+                      value={name}
+                      onInput={e => setInput(e.target.value)}
+                    />
+                  ) : (
+                    <span>{name}</span>
+                  )}
+                </label>
+                <div class="w-104px shrink-0">
                   {editingIndex() !== index ? (
                     <button
                       class="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
@@ -101,7 +119,6 @@ const IndexedDBComponent = props => {
                   <button
                     class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
                     onDblClick={() => handleDelete(index)}
-                    // onClick={() => handleDelete(index)}
                   >
                     删除
                   </button>

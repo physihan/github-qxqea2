@@ -6,16 +6,10 @@ interface ModalProps {
   onOk?: () => void
   onCancel?: () => void
   children?: JSX.Element
-  desdroyOnClose?: boolean // I suppose this is a typo and should be `destroyOnClose`
 }
 
 const Modal = (props: ModalProps) => {
-  const { isOpen, setIsOpen, onOk, onCancel, children, desdroyOnClose } = props
-
-  if (!isOpen() && desdroyOnClose) {
-    console.log("sssxxx")
-    return null
-  }
+  const { isOpen, setIsOpen, onOk, onCancel, children } = props
 
   return (
     <div
