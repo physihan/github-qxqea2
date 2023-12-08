@@ -80,7 +80,7 @@ export default function ({
             )}
           </For>
           <div class="grid grid-cols-2 gap-2">
-          <Show when={true}>
+          <Show when={!store.loading}>
           {presetMessages.map((message, index) => (
         <button
           onClick={() => sendMessage(message.content)}

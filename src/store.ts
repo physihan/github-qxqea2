@@ -1,6 +1,6 @@
 import { createStore } from "solid-js/store"
 import { defaultEnv } from "./env"
-import { type ChatMessage, LocalStorageKey } from "./types"
+import { ChatMessage, LocalStorageKey, TalkMode } from "./types"
 import { batch, createEffect, createMemo, createRoot } from "solid-js"
 import { fetchAllSessions, getSession } from "./utils"
 import { Fzf } from "fzf"
@@ -131,13 +131,22 @@ function Store() {
   const validContext = createMemo(() =>
     store.sessionSettings.continuousDialogue
       ? store.messageList.filter(
-          (k, i, _) =>
-            (k.role === "assistant" &&
+          (k, i, _) =>{
+// switch (store.sessionSettings.talkMode){
+//   case TalkMode.HEAD_TAIL:
+//   return []
+//   default :
+//   break
+
+// }
+       return     (k.role === "assistant" &&
               k.type !== "temporary" &&
               _[i - 1]?.role === "user") ||
             (k.role === "user" &&
               _[i + 1]?.role !== "error" &&
               _[i + 1]?.type !== "temporary")
+          }
+
         )
       : store.messageList.filter(k => k.type === "locked")
   )
@@ -155,6 +164,7 @@ function Store() {
 
   const throttleCountContext = throttle((content: string) => {
     countTokensInWorker(content).then(res => {
+      console.log('ss',res)
       setStore("contextToken", res)
     })
   }, 100)

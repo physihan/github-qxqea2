@@ -19,7 +19,13 @@ export type Model =
   | "gpt-3.5-turbo-16k-0613"
   | "gpt-4-0613"
   | "gpt-4-32k-0613"
-export type TalkMode= "1"|"2"|"4";
+// export type TalkMode= "1"|"2"|"4";
+export enum TalkMode{
+  HEAD_TAIL='1',
+  LONG='2',
+  STANDALONE='4',
+  LOCK='8'
+}
 export interface Prompt {
   desc: string
   detail: string

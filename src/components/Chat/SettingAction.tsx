@@ -209,7 +209,7 @@ export default function SettingAction() {
                 class="max-w-150px"
                 value={store.sessionSettings.talkMode}
                 onChange={e => {
-                  console.log( parseInt((e.target as HTMLSelectElement).value,2))
+                  console.log( parseInt((e.target as HTMLSelectElement).value))
                   setStore(
                     "sessionSettings",
                     "talkMode",
@@ -222,15 +222,15 @@ export default function SettingAction() {
                     label: "头尾对话模式"
                   },
                   {
-                    value: "10",
+                    value: "2",
                     label: "长对话模式"
                   },
                   {
-                    value: "100",
+                    value: "4",
                     label: "独立对话模式"
                   },
                   {
-                    value: "1000",
+                    value: "8",
                     label: "锁定模式"
                   }
                 ]}
