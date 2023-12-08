@@ -176,11 +176,15 @@ function Store() {
 
   const remainingToken = createMemo(
     () =>
-      (store.globalSettings.APIKey
+      {
+        if (['1',"1000"].includes(store.sessionSettings.talkMode)){
+          return Number.MAX_SAFE_INTEGER
+        }
+        return (store.globalSettings.APIKey
         ? maxInputTokens[store.sessionSettings.model]
         : defaultEnv.CLIENT_MAX_INPUT_TOKENS[store.sessionSettings.model]) -
       store.contextToken -
-      store.inputContentToken
+      store.inputContentToken}
   )
 
   const currentModel = createMemo(() => {
