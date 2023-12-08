@@ -5,7 +5,18 @@ import MessageItem from "./MessageItem"
 import { defaultInputBoxHeight } from "./InputBox"
 import { TransitionGroup } from "solid-transition-group"
 import "~/styles/transition.css"
-
+// 在组件中定义备选聊天数据
+const presetMessages = [
+  {
+    title: "继续",
+    content: "继续"
+  },
+  {
+    title: "细节",
+    content: "继续描述细节"
+  },
+  // ... 其他备选聊天数据
+];
 export default function ({
   sendMessage,
   inputBoxHeight
@@ -68,6 +79,19 @@ export default function ({
               />
             )}
           </For>
+          <div class="grid grid-cols-2 gap-2">
+          <Show when={true}>
+          {presetMessages.map((message, index) => (
+        <button
+          onClick={() => sendMessage(message.content)}
+          class="bg-gray-300 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          {message.title}
+        </button>
+      ))}
+        </Show>
+
+    </div>
         </TransitionGroup>
       </div>
       <Show
