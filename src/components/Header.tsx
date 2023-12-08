@@ -5,6 +5,7 @@ import { Show, createMemo, createSignal } from "solid-js"
 import { useNavigate } from "solid-start"
 import Modal from "./Modal"
 import IndexedDBComponent from "./IndexModal"
+import SaveModal from "./SaveModal"
 
 function splitEmoji(text: string) {
   const [icon, title] = text
@@ -34,6 +35,7 @@ export default function Header() {
   const navigate = useNavigate()
   const iconTitle = createMemo(() => splitEmoji(store.sessionSettings.title))
   const [isOpen, setIsOpen] = createSignal(false)
+  const [isSaveOpen, setIsSaveOpen] = createSignal(false)
   const save = () => {
     store.messageList
   }
@@ -75,12 +77,7 @@ export default function Header() {
                 <a
                   class="ml-2 <sm:hidden"
                   href="https://github.com/ourongxing/chatgpt-vercel"
-                >
-                  <img
-                    alt="GitHub forks badge"
-                    src="https://img.shields.io/github/stars/ourongxing/chatgpt-vercel?logo=github"
-                  />
-                </a>
+                ></a>
               </>
             }
           >
@@ -98,23 +95,12 @@ export default function Header() {
         </p>
         <p
           onClick={() => {
-            try {
-              const presets = JSON.parse(
-                localStorage.getItem("presets") || "[]"
-              )
-              const lockedMessage = store.messageList.filter(
-                k => k.type === "locked"
-              )
-              if (lockedMessage.length > 0) {
-                presets.push(lockedMessage)
-              }
-              localStorage.setItem("presets", JSON.stringify(presets))
-            } catch {}
+            setIsSaveOpen(true)
           }}
         >
           保存预设
         </p>
-        {/* <Modal isOpen={isOpen()}></Modal> */}
+        <SaveModal {...{ isOpen: isSaveOpen, setIsOpen: setIsSaveOpen }} />
         <IndexedDBComponent {...{ isOpen, setIsOpen }} />
         <ThemeToggle />
       </header>

@@ -1,7 +1,21 @@
-import { createSignal } from "solid-js"
+import { createSignal, JSX } from "solid-js"
 
-const Modal = props => {
-  const { isOpen, setIsOpen, onOk, onCancel, children } = props
+interface ModalProps {
+  isOpen: () => boolean
+  setIsOpen: (isOpen: boolean) => void
+  onOk?: () => void
+  onCancel?: () => void
+  children?: JSX.Element
+  desdroyOnClose?: boolean // I suppose this is a typo and should be `destroyOnClose`
+}
+
+const Modal = (props: ModalProps) => {
+  const { isOpen, setIsOpen, onOk, onCancel, children, desdroyOnClose } = props
+
+  if (!isOpen() && desdroyOnClose) {
+    console.log("sssxxx")
+    return null
+  }
 
   return (
     <div
@@ -24,7 +38,10 @@ const Modal = props => {
             </button>
             <button
               class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              onClick={onOk}
+              onClick={() => {
+                onOk && onOk()
+                setIsOpen(false)
+              }}
             >
               OK
             </button>
@@ -34,4 +51,5 @@ const Modal = props => {
     </div>
   )
 }
+
 export default Modal
