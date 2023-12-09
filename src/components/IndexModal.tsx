@@ -70,7 +70,7 @@ const IndexedDBComponent = props => {
           }
         }}
       >
-        <ul class="list-disc pl-4">
+        <ul class="list-disc pl-4 max-h-300px overflow-y-auto">
           {data().map((item, index) => {
             let name
             if (Array.isArray(item)) {

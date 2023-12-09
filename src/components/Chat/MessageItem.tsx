@@ -150,7 +150,7 @@ export default function MessageItem(props: Props) {
           <>
             <textarea
               class="w-full"
-              rows={5}
+              rows={10}
               value={editValue()}
               onInput={e => {
                 setEditValue(e.target.value)
