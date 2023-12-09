@@ -81,14 +81,17 @@ export default function ({
           </For>
           <div class="grid grid-cols-2 gap-2">
           <Show when={!store.loading}>
+            <div class="mt-4 flex gap-2">
+
           {presetMessages.map((message, index) => (
-        <button
-          onClick={() => sendMessage(message.content)}
-          class="bg-gray-300 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
+            <button
+            onClick={() => sendMessage(message.content)}
+            class="bg-gray-300 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
           {message.title}
         </button>
       ))}
+      </div>
         </Show>
 
     </div>
