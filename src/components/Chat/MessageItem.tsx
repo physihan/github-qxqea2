@@ -71,18 +71,12 @@ export default function MessageItem(props: Props) {
     setStore("messageList", messages => {
       if (messages[props.index!].role === "user") {
         question = messages[props.index!].content
-        return messages.filter(
-          (_, i) =>
-            !(
-              i === props.index ||
-              (i === props.index! + 1 && _.role !== "user")
-            )
-        )
+        return messages.slice(0,props.index!)
+    
       } else {
         question = messages[props.index! - 1].content
-        return messages.filter(
-          (_, i) => !(i === props.index || i === props.index! - 1)
-        )
+        return messages.slice(0,props.index!-1)
+
       }
     })
     props.sendMessage?.(question)
