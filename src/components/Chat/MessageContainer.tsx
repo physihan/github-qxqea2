@@ -15,6 +15,10 @@ const presetMessages = [
     title: "细节",
     content: "继续描述细节"
   },
+  {
+    title: "规则",
+    content: "记住规则并继续"
+  },
   // ... 其他备选聊天数据
 ];
 export default function ({
