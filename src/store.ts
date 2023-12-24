@@ -87,6 +87,10 @@ const modelFee = {
   "gpt-4-32k-0613": {
     input: 0.06,
     output: 0.12
+  },
+  gemini: {
+    input: 0,
+    output: 0
   }
 } satisfies {
   [key in Model]: {
@@ -130,24 +134,23 @@ function Store() {
 
   const validContext = createMemo(() =>
     store.sessionSettings.continuousDialogue
-      ? store.messageList.filter(
-          (k, i, _) =>{
-// switch (store.sessionSettings.talkMode){
-//   case TalkMode.HEAD_TAIL:
-//   return []
-//   default :
-//   break
+      ? store.messageList.filter((k, i, _) => {
+          // switch (store.sessionSettings.talkMode){
+          //   case TalkMode.HEAD_TAIL:
+          //   return []
+          //   default :
+          //   break
 
-// }
-       return     (k.role === "assistant" &&
+          // }
+          return (
+            (k.role === "assistant" &&
               k.type !== "temporary" &&
               _[i - 1]?.role === "user") ||
             (k.role === "user" &&
               _[i + 1]?.role !== "error" &&
               _[i + 1]?.type !== "temporary")
-          }
-
-        )
+          )
+        })
       : store.messageList.filter(k => k.type === "locked")
   )
 
@@ -164,7 +167,7 @@ function Store() {
 
   const throttleCountContext = throttle((content: string) => {
     countTokensInWorker(content).then(res => {
-      console.log('ss',res)
+      console.log("ss", res)
       setStore("contextToken", res)
     })
   }, 100)
@@ -184,24 +187,26 @@ function Store() {
     throttleCountCurrentAssistantMessage(store.currentAssistantMessage)
   })
 
-  const remainingToken = createMemo(
-    () =>
-      {
-        if (['1',"1000"].includes(store.sessionSettings.talkMode)){
-          return Number.MAX_SAFE_INTEGER
-        }
-        return (store.globalSettings.APIKey
+  const remainingToken = createMemo(() => {
+    if (["1", "1000"].includes(store.sessionSettings.talkMode)) {
+      return Number.MAX_SAFE_INTEGER
+    }
+    return (
+      (store.globalSettings.APIKey
         ? maxInputTokens[store.sessionSettings.model]
         : defaultEnv.CLIENT_MAX_INPUT_TOKENS[store.sessionSettings.model]) -
       store.contextToken -
-      store.inputContentToken}
-  )
+      store.inputContentToken
+    )
+  })
 
   const currentModel = createMemo(() => {
     const model = store.sessionSettings.model
     const tk = (store.inputContentToken + store.contextToken) / 1000
     if (model === "gpt-3.5") {
       return models["gpt-3.5"][tk < 3.5 ? "4k" : "16k"]
+    } else if (model === "gemini") {
+      return "gemini"
     } else {
       return models["gpt-4"][tk < 7 ? "8k" : "32k"]
     }

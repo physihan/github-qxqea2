@@ -4,7 +4,7 @@ import { createStore } from "solid-js/store"
 import { defaultEnv } from "~/env"
 import { clickOutside } from "~/hooks"
 import { RootStore, loadSession } from "~/store"
-import type { ChatMessage, SimpleModel,TalkMode } from "~/types"
+import type { ChatMessage, SimpleModel, TalkMode } from "~/types"
 import {
   copyToClipboard,
   dateFormat,
@@ -146,6 +146,10 @@ export default function SettingAction() {
                     label: "gpt-3.5(auto)"
                   },
                   {
+                    value: "gemini",
+                    label: "gemini"
+                  },
+                  {
                     value: "gpt-4",
                     label: "gpt-4(auto)"
                   }
@@ -205,11 +209,11 @@ export default function SettingAction() {
               icon="i-carbon:3d-curve-auto-colon"
               label="开启头尾模式"
             >
-               <Selector
+              <Selector
                 class="max-w-150px"
                 value={store.sessionSettings.talkMode}
                 onChange={e => {
-                  console.log( parseInt((e.target as HTMLSelectElement).value))
+                  console.log(parseInt((e.target as HTMLSelectElement).value))
                   setStore(
                     "sessionSettings",
                     "talkMode",

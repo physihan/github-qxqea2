@@ -4,7 +4,7 @@ import type { ChatMessage, Model } from "~/types"
 import { splitKeys, randomKey, fetchWithTimeout } from "~/utils"
 import { defaultEnv } from "~/env"
 import type { APIEvent } from "solid-start/api"
-
+import { GoogleGenerativeAI } from "@fuyun/generative-ai"
 export const config = {
   runtime: "edge",
   /**
@@ -49,7 +49,65 @@ const timeout = isNaN(+process.env.TIMEOUT!)
   : +process.env.TIMEOUT!
 
 const passwordSet = process.env.PASSWORD || defaultEnv.PASSWORD
+async function gemini(messages: { role: string; content: string }[]) {
+  const genAI = new GoogleGenerativeAI(
+    "AIzaSyDZ3KZTrJumy2AbsxA8v2L57OgCraX8ReU"
+  )
+  console.log(messages)
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" })
+  const history = messages.map(item => {
+    return {
+      role: item.role === "assistant" ? "model" : item.role,
+      parts: item.content
+    }
+  })
+  // const history= [
+  //   // {
+  //   //   role: "user",
+  //   //   parts: "Hello, I have 2 dogs in my house.",
+  //   // },
+  //   // {
+  //   //   role: "model",
+  //   //   parts: "Great to meet you. What would you like to know?",
+  //   // }
+  // ]
+  console.log(history)
+  const chat = model.startChat({
+    history: history.length > 2 ? history.slice(0, -1) : [],
+    // history: [
+    //   {
+    //     role: "user",
+    //     parts: "Hello, I have 2 dogs in my house."
+    //   },
+    //   {
+    //     role: "model",
+    //     parts: "Great to meet you. What would you like to know?"
+    //   }
+    // ],
+    generationConfig: {
+      maxOutputTokens: 8000
+    }
+  })
 
+  const msg = history[history.length - 1]?.parts
+  console.log(msg)
+
+  const rawRes = await chat.sendMessageStream(msg)
+  const encodedStream = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder()
+
+      for await (const chunk of rawRes.stream) {
+        const text = await chunk.text()
+        const encoded = encoder.encode(text)
+        controller.enqueue(encoded)
+      }
+      controller.close()
+    }
+  })
+
+  return new Response(encodedStream)
+}
 export async function POST({ request }: APIEvent) {
   try {
     const body: {
@@ -59,7 +117,12 @@ export async function POST({ request }: APIEvent) {
       password?: string
       model: Model
     } = await request.json()
+
     const { messages, key = localKey, temperature, password, model } = body
+    // 使用oogleapi
+    if (model === "gemini") {
+      return gemini(messages || ([] as any))
+    }
 
     if (passwordSet && password !== passwordSet) {
       throw new Error("密码错误，请联系网站管理员。")
@@ -88,7 +151,8 @@ export async function POST({ request }: APIEvent) {
 
     const apiKey = randomKey(splitKeys(key))
 
-    if (!apiKey) throw new Error("没有填写 OpenAI API key，或者 key 填写错误。")
+    if (!apiKey)
+      throw new Error("没有填写 OpenAI API key1，或者 key 填写错误。")
 
     const encoder = new TextEncoder()
     const decoder = new TextDecoder()
@@ -110,6 +174,7 @@ export async function POST({ request }: APIEvent) {
         })
       }
     ).catch((err: { message: any }) => {
+      console.log(message)
       return new Response(
         JSON.stringify({
           error: {
@@ -119,7 +184,6 @@ export async function POST({ request }: APIEvent) {
         { status: 500 }
       )
     })
-
     if (!rawRes.ok) {
       return new Response(rawRes.body, {
         status: rawRes.status,
@@ -130,6 +194,7 @@ export async function POST({ request }: APIEvent) {
     const stream = new ReadableStream({
       async start(controller) {
         const streamParser = (event: ParsedEvent | ReconnectInterval) => {
+          console.log(event)
           if (event.type === "event") {
             const data = event.data
             if (data === "[DONE]") {
